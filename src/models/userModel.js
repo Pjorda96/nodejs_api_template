@@ -9,7 +9,7 @@ const UserSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
   displayName: String,
   avatar: String,
-  password: { type: String, select: false }, // select no permite devolver el campo en query
+  password: { type: String, select: false }, // select: false  don't return the data
   signupDate: { type: Date, default: Date.now() },
   lastLogin: Date
 })
@@ -39,4 +39,3 @@ UserSchema.methods.gravatar = function() {
 }
 
 module.exports = mongoose.model('User', UserSchema)
-

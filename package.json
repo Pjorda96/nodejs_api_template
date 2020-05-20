@@ -1,17 +1,19 @@
 {
-  "name": "nodejstutorial",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "nodejs-api-template",
+  "version": "0.0.1",
+  "description": "Node.js api for backend projects quickstart",
+  "main": "src/index.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon src/index.js",
+    "production": "cross-env PROD=true node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "https://github.com/Pjorda96",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^4.0.1",
     "body-parser": "^1.19.0",
+    "cross-env": "^7.0.2",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "jwt-simple": "^0.5.6",
