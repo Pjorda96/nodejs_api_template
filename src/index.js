@@ -7,12 +7,12 @@ const config = require('./config');
 const port = config.port;
 
 mongoose.connect(config.db, (err, res) => {
-  if (err) {
-    return console.log('Error de conexión: ' + err)
+  if (err) { // TODO: mongo connection
+    return console.log('Connection error: ' + err)
   }
-  console.log('Conexión establecida')
+  console.log('Mongo connection established')
 
   app.listen(port, () => {
-    console.log(`Example app listening on port ${port}!`)
+    console.log(`Node.js api listening on port ${port}!`)
   })
 })

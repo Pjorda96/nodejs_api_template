@@ -7,8 +7,8 @@ const config = require('../config')
 function createToken(user) {
   const payload = {
     sub: user._id,
-    iat: moment().unix(),
-    exp: moment().add(14, 'days').unix(),
+    iat: moment().unix(), // token creation date
+    exp: moment().add(14, 'days').unix(), // TODO: determine token duration
   }
 
   return jwt.encode(payload, config.secretToken)
@@ -22,7 +22,7 @@ function decodeToken(token) {
       if (payload.exp <= moment.unix()) {
         reject({
           status: 401,
-          mensaje: 'Token expirado'
+          mensaje: 'Expired token'
         })
       }
 
