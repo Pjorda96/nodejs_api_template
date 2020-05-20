@@ -27,11 +27,10 @@ function createPost(req, res) {
   console.log(req.body)
 
   let post = new PostModel()
-  post.name = req.body.name
-  post.picture = req.body.picture
-  post.price = req.body.price
-  post.category = req.body.category
-  post.description = req.body.description
+  post.url = req.body.url
+  post.callNumber = req.body.callNumber
+  post.cathegory = req.body.cathegory
+  post.body = req.body.body
 
   post.save((err, post) => {
     if (err) res.status(500).send({ message: err })

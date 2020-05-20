@@ -2,11 +2,12 @@
 
 const mongoose = require('mongoose')
 const app = require('./app')
-
 const config = require('./config');
-const port = config.port;
 
-mongoose.connect(config.db, (err, res) => {
+const port = config.port;
+const mongoConfig = { useNewUrlParser: true, useUnifiedTopology: true };
+
+mongoose.connect(config.db, mongoConfig, (err, res) => {
   if (err) { // TODO: mongo connection
     return console.log('Connection error: ' + err)
   }
