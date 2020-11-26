@@ -12,4 +12,8 @@ app.use(bodyParser.json())
 
 app.use('/api', api)
 
-module.exports = app
+app.get('/health/check', (req, res) => {
+  res.status(200).send({ message: 'Healthy' })
+})
+
+export default app
