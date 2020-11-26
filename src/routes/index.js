@@ -45,7 +45,7 @@ api.delete('/post/:id', authMiddleware.isAuth, deletePost)
 
 api.get('/private', authMiddleware.isAuth, (req, res) => {
   console.log('private')
-  res.status(200).send({ mensaje: "It's ok" })
+  res.status(200).send({ message: "It's ok" })
 })
 
-module.exports = api
+export default api
