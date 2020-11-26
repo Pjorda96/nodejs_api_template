@@ -1,9 +1,9 @@
 'use strict'
 
-const express = require('express')
-const bodyParser = require('body-parser')
+import express from 'express'
+import bodyParser from 'body-parser'
 
-const api = require('./routes')
+import api from './routes'
 
 const app = express()
 

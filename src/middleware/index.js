@@ -1,7 +1,7 @@
 'use strict'
 
-const authMiddleware = require('./authMiddleware')
+import authMiddleware from './authMiddleware'
 
-module.exports = {
+export {
   authMiddleware
 }

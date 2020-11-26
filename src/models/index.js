@@ -1,9 +1,9 @@
 'use strict'
 
-const userModel = require('./postModel')
-const postModel = require('./userModel');
+import userModel from './postModel'
+import postModel from './userModel'
 
-module.exports = {
+export {
   userModel,
   postModel
 }

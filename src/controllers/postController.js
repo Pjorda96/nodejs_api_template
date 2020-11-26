@@ -1,6 +1,6 @@
 'use strict'
 
-const PostModel = require('../models/postModel')
+import PostModel from '../models/postModel'
 
 function getPostAll(req, res) {
   PostModel.find({}, (err, post) => {
@@ -32,10 +32,10 @@ function createPost(req, res) {
   post.cathegory = req.body.cathegory
   post.body = req.body.body
 
-  post.save((err, post) => {
+  post.save((err, postRes) => {
     if (err) res.status(500).send({ message: err })
 
-    res.status(200).send({ post })
+    res.status(200).send({ post: postRes })
   })
 }
 
@@ -62,7 +62,7 @@ function deletePost(req, res) {
   })
 }
 
-module.exports = {
+export {
   getPostAll,
   getPost,
   createPost,

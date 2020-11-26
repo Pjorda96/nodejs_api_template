@@ -1,7 +1,7 @@
 'use strict'
 
-const authService = require('./authService')
+import authService from './authService'
 
-module.exports = {
+export {
   authService
 }

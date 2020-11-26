@@ -1,9 +1,9 @@
 'use strict'
 
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 const Schema = mongoose.Schema
-const bcrypt = require('bcrypt');
-const crypto = require('crypto');
+import bcrypt from 'bcrypt'
+import crypto from 'crypto'
 
 const UserSchema = new Schema({
   email: { type: String, unique: true, lowercase: true },
@@ -38,4 +38,4 @@ UserSchema.methods.gravatar = function() {
   return `https://gravatar.com/avatar/${md5}?s=200&d=retro`
 }
 
-module.exports = mongoose.model('User', UserSchema)
+export default mongoose.model('User', UserSchema)

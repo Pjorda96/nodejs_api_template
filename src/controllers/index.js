@@ -1,9 +1,9 @@
 'use strict'
 
-const userController = require('./userController')
-const postController = require('./productController')
+import userController from './userController'
+import postController from './postController'
 
-module.exports = {
+export {
   userController,
   postController
 }

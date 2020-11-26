@@ -1,7 +1,7 @@
 'use strict'
 
-const UserModel = require('../models/UserModel')
-const AuthService = require('../services/AuthService')
+import UserModel from '../models/userModel'
+import { authService } from '../services'
 
 function getUsers(req, res) {
   UserModel.find({}, (err, users) => {
@@ -68,12 +68,12 @@ function signIn(req, res) {
     req.user = user;
     res.status(200).send({
       message: 'Logged in',
-      token: AuthService.createToken(user)
+      token: authService.createToken(user)
     })
   })
 }
 
-module.exports = {
+export {
   getUsers,
   getUser,
   updateUser,

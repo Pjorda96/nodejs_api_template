@@ -1,6 +1,6 @@
 'use strict'
 
-const services = require('../services')
+import { authService } from '../services'
 
 function isAuth(req, res, next) {
   if (!req.headers.authorization) {
@@ -9,7 +9,7 @@ function isAuth(req, res, next) {
 
   const token = req.headers.authorization.split(" ")[1]
 
-  services.authService.decodeToken(token)
+  authService.decodeToken(token)
     .then(response => {
       req.user = response;
       next()
@@ -19,4 +19,6 @@ function isAuth(req, res, next) {
     })
 }
 
-module.exports = isAuth
+export default {
+  isAuth
+}

@@ -1,36 +1,49 @@
 'use strict'
 
-const express = require('express')
+import express from 'express'
 
 // Controllers
-const UserController = require('../controllers/userController')
-const PostController = require('../controllers/postController')
+import {
+  getUsers,
+  getUser,
+  updateUser,
+  deleteUser,
+  signIn,
+  signUp
+} from '../controllers/userController'
+import {
+  getPostAll,
+  getPost,
+  createPost,
+  updatePost,
+  deletePost
+} from '../controllers/postController'
 
 // Middleware
-const auth = require('../middleware/authMiddleware')
+import { authMiddleware } from '../middleware'
 
 const api = express.Router()
 
 
 // user routes
-api.get('/user', auth, UserController.getUsers) // comprobar rol
-api.get('/user/:id', auth, UserController.getUser) // comprobar el usuario y el rol
+api.get('/user', authMiddleware.isAuth, getUsers) // comprobar rol
+api.get('/user/:id', authMiddleware.isAuth, getUser) // comprobar el usuario y el rol
 // no user post, use signup
-api.put('/user/:id', auth, UserController.updateUser) // comprobar el usuario y rol
-api.delete('/user/:id', auth, UserController.deleteUser) // comprobar el usuario y rol
+api.put('/user/:id', authMiddleware.isAuth, updateUser) // comprobar el usuario y rol
+api.delete('/user/:id', authMiddleware.isAuth, deleteUser) // comprobar el usuario y rol
 
 // auth
-api.post('/signup', UserController.signUp)
-api.post('/signin', UserController.signIn)
+api.post('/signup', signUp)
+api.post('/signin', signIn)
 
 // post routes
-api.get('/post', PostController.getPostAll)
-api.get('/post/:id', PostController.getPost)
-api.post('/post', auth, PostController.createPost)
-api.put('/post/:id', auth, PostController.updatePost)
-api.delete('/post/:id', auth, PostController.deletePost)
+api.get('/post', getPostAll)
+api.get('/post/:id', getPost)
+api.post('/post', authMiddleware.isAuth, createPost)
+api.put('/post/:id', authMiddleware.isAuth, updatePost)
+api.delete('/post/:id', authMiddleware.isAuth, deletePost)
 
-api.get('/private', auth, function(req, res) {
+api.get('/private', authMiddleware.isAuth, (req, res) => {
   console.log('private')
   res.status(200).send({ mensaje: "It's ok" })
 })
