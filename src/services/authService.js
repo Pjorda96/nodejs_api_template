@@ -1,14 +1,13 @@
 'use strict'
 
 import jwt from 'jwt-simple'
-import moment from 'moment'
 import config from '../config'
 
 function createToken(user) {
   const payload = {
     sub: user._id,
-    iat: moment().unix(), // token creation date
-    exp: moment().add(14, 'days').unix(), // TODO: determine token duration
+    iat: +new Date(), // token creation date
+    exp: +new Date().setHours(config.tokenDuration), // TODO: determine token duration
   }
 
   return jwt.encode(payload, config.secretToken)
@@ -19,10 +18,10 @@ function decodeToken(token) {
     try {
       const payload = await jwt.decode(token, config.secretToken)
 
-      if (payload.exp <= moment.unix()) {
+      if (payload.exp <= + new Date()) {
         reject({
           status: 401,
-          mensaje: 'Expired token'
+          message: 'Expired token'
         })
       }
 
