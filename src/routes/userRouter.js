@@ -11,9 +11,6 @@ import { authMiddleware } from '../middleware'
 
 const api = express.Router()
 
-api.use(authMiddleware.isAuth) // use middleware on all the routes
-// middleware for rol
-
 // routes
 api.get('/', getUsers)
 api.get('/:id', getUser)
