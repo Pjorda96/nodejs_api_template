@@ -6,8 +6,8 @@ import config from '../config'
 function createToken(user) {
   const payload = {
     sub: user._id,
-    iat: +new Date(), // token creation date
-    exp: +new Date().setHours(config.tokenDuration), // TODO: determine token duration
+    iat: + new Date(), // token creation date
+    exp: + new Date().setHours(new Date().getHours() + config.tokenDuration), // TODO: determine token duration
   }
 
   return jwt.encode(payload, config.secretToken)
