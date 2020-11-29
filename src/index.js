@@ -1,19 +1,15 @@
 'use strict'
 
-import mongoose from 'mongoose'
 import app from './app'
 import config from './config'
+import { connectDb } from "./services/dbService";
 
 const port = config.port;
-const mongoConfig = { useNewUrlParser: true, useUnifiedTopology: true };
 
-mongoose.connect(config.db, mongoConfig, (err, res) => {
-  if (err) { // TODO: mongo connection
-    return console.log('Connection error: ' + err)
-  }
-  console.log('Mongo connection established')
+connectDb()
+  .then(() => console.log('Database connection established'))
+  .catch(err => console.log('Database connection error: ' + err))
 
-  app.listen(port, () => {
-    console.log(`Node.js api listening on http://localhost:${port}!`)
-  })
+app.listen(port, () => {
+  console.log(`Node.js api listening on http://localhost:${port}!`)
 })
