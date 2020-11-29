@@ -14,6 +14,6 @@ mongoose.connect(config.db, mongoConfig, (err, res) => {
   console.log('Mongo connection established')
 
   app.listen(port, () => {
-    console.log(`Node.js api listening on port ${port}!`)
+    console.log(`Node.js api listening on http://localhost:${port}!`)
   })
 })
