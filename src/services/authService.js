@@ -3,7 +3,7 @@
 import jwt from 'jwt-simple'
 import config from '../config'
 
-function createToken(user) {
+export function createToken(user) {
   const payload = {
     sub: user._id,
     iat: + new Date(), // token creation date
@@ -13,7 +13,7 @@ function createToken(user) {
   return jwt.encode(payload, config.secretToken)
 }
 
-function decodeToken(token) {
+export function decodeToken(token) {
   return new Promise(async (resolve, reject) => {
     try {
       const payload = await jwt.decode(token, config.secretToken)
@@ -33,9 +33,4 @@ function decodeToken(token) {
       })
     }
   })
-}
-
-export default {
-  createToken,
-  decodeToken
 }

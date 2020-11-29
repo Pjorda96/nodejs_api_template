@@ -3,7 +3,7 @@
 import express from 'express'
 
 // Middleware
-import { authMiddleware } from '../middleware'
+import { isAuth } from '../middleware/authMiddleware'
 
 // Routes
 import post from './postRouter'
@@ -14,10 +14,10 @@ const api = express.Router()
 
 // Nested routes
 api.use('/post', post)
-api.use('/user', authMiddleware.isAuth, user)
+api.use('/user', isAuth, user)
 api.use('/', auth)
 
-api.get('/private', authMiddleware.isAuth, (req, res) => {
+api.get('/private', isAuth, (req, res) => {
   console.log('private')
   res.status(200).send({ message: "It's ok" })
 })

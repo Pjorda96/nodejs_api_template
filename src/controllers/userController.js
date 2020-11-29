@@ -1,9 +1,9 @@
 'use strict'
 
 import UserModel from '../models/userModel'
-import { authService } from '../services'
+import { createToken } from '../services/authService'
 
-function getUsers(req, res) {
+export function getUsers(req, res) {
   UserModel.find({}, (err, users) => {
     if (err) return res.status(500).send({ message: err })
     if (!users) return res.status(404).send({ message: 'Not users found' })
@@ -12,7 +12,7 @@ function getUsers(req, res) {
   })
 }
 
-function getUser(req, res) {
+export function getUser(req, res) {
   const id = req.params.id
 
   UserModel.findById(id, (err, user) => {
@@ -23,7 +23,7 @@ function getUser(req, res) {
   })
 }
 
-function updateUser(req, res) {
+export function updateUser(req, res) {
   const id = req.params.id;
   const body = req.body;
 
@@ -35,7 +35,7 @@ function updateUser(req, res) {
   });
 }
 
-function deleteUser(req, res) {
+export function deleteUser(req, res) {
   const id = req.params.id;
 
   UserModel.findByIdAndDelete(id, null, (err, user) => {
@@ -46,7 +46,7 @@ function deleteUser(req, res) {
   })
 }
 
-function signUp(req, res) {
+export function signUp(req, res) {
   const user = new UserModel(req.body)
 
   user.save((err, userDb) => {
@@ -57,12 +57,12 @@ function signUp(req, res) {
       id: _id,
       email,
       displayName,
-      token: authService.createToken(user)
+      token: createToken(user)
     })
   })
 }
 
-function signIn(req, res) {
+export function signIn(req, res) {
   UserModel.find({ email: req.body.email }, (err, user) => {
     if (err) return res.status(500).send({ message: err })
     if (!user || !user.length) return res.status(404).send({ message: 'User not found' })
@@ -75,16 +75,7 @@ function signIn(req, res) {
       id: _id,
       email,
       displayName,
-      token: authService.createToken(user)
+      token: createToken(user)
     })
   })
-}
-
-export {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  signIn,
-  signUp
 }

@@ -2,7 +2,7 @@
 
 import PostModel from '../models/postModel'
 
-function getPostAll(req, res) {
+export function getPostAll(req, res) {
   PostModel.find({}, (err, post) => {
     if (err) return res.status(500).send({ message: err })
     if (!post) return res.status(404).send({ message: 'Not post found' })
@@ -11,7 +11,7 @@ function getPostAll(req, res) {
   })
 }
 
-function getPost(req, res) {
+export function getPost(req, res) {
   const id = req.params.id
 
   PostModel.findById(id, (err, post) => {
@@ -22,7 +22,7 @@ function getPost(req, res) {
   })
 }
 
-function createPost(req, res) {
+export function createPost(req, res) {
   const post = new PostModel(req.body)
 
   post.save((err, postRes) => {
@@ -32,7 +32,7 @@ function createPost(req, res) {
   })
 }
 
-function updatePost(req, res) {
+export function updatePost(req, res) {
   const id = req.params.id;
   const body = req.body;
 
@@ -44,7 +44,7 @@ function updatePost(req, res) {
   });
 }
 
-function deletePost(req, res) {
+export function deletePost(req, res) {
   const id = req.params.id;
 
   PostModel.findByIdAndDelete(id, null, (err, post) => {
@@ -53,12 +53,4 @@ function deletePost(req, res) {
 
     res.status(200).send({ message: 'Post deleted' })
   })
-}
-
-export {
-  getPostAll,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost
 }

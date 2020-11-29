@@ -8,15 +8,15 @@ import {
   updatePost,
   deletePost
 } from '../controllers/postController'
-import { authMiddleware } from '../middleware'
+import { isAuth } from '../middleware/authMiddleware'
 
 const api = express.Router()
 
 // routes
 api.get('/', getPostAll)
 api.get('/:id', getPost)
-api.post('/', authMiddleware.isAuth, createPost)
-api.put('/:id', authMiddleware.isAuth, updatePost)
-api.delete('/:id', authMiddleware.isAuth, deletePost)
+api.post('/', isAuth, createPost)
+api.put('/:id',isAuth, updatePost)
+api.delete('/:id',isAuth, deletePost)
 
 export default api
