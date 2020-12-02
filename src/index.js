@@ -2,7 +2,7 @@
 
 import app from './app'
 import config from './config'
-import { connectDb } from "./services/dbService";
+import { connectDb } from "./providers/dbProvider";
 
 const port = config.port;
 

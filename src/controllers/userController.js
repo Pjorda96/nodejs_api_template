@@ -1,81 +1,96 @@
 'use strict'
 
-import UserModel from '../models/userModel'
-import { createToken } from '../services/authService'
+import {
+  getUsers as getUsersService,
+  getUser as getUserService,
+  updateUser as updateUserService,
+  deleteUser as deleteUserService,
+  signUp as signUpService,
+  signIn as signInService
+} from '../services/userService'
 
-export function getUsers(req, res) {
-  UserModel.find({}, (err, users) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!users) return res.status(404).send({ message: 'Not users found' })
-
-    res.status(200).send(users)
-  })
+const resSuccess = (res, status, data) => {
+  res.status(status || 200).send(data)
 }
 
-export function getUser(req, res) {
+const resFailure = (res, status, message) => {
+  res.status(status || 500).send({ message })
+}
+
+export async function getUsers(req, res) {
+  try {
+    const users = await getUsersService()
+
+    resSuccess(res, users.status, users.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
+}
+
+export async function getUser(req, res) {
   const id = req.params.id
 
-  UserModel.findById(id, (err, user) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!user) return res.status(404).send({ message: 'User not found' })
+  try {
+    const user = await getUserService(id)
 
-    res.status(200).send(user)
-  })
+    resSuccess(res, user.status, user.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
 }
 
-export function updateUser(req, res) {
+export async function updateUser(req, res) {
   const id = req.params.id;
   const body = req.body;
 
-  UserModel.findByIdAndUpdate(id, body, (err, user) => {
-    if (err) res.status(500).send({ message: err });
-    if (!user) return res.status(404).send({ message: 'User not found' });
+  try {
+    const prevUser = await updateUserService(id, body)
+    const user = await getUserService(prevUser.data._id)
 
-    res.status(200).send(user);
-  });
+    resSuccess(res, user.status, user.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
 }
 
-export function deleteUser(req, res) {
+export async function deleteUser(req, res) {
   const id = req.params.id;
 
-  UserModel.findByIdAndDelete(id, null, (err, user) => {
-    if (err) res.status(500).send({ message: err });
-    if (!user) return res.status(404).send({ message: 'User not found' });
+  try {
+    const user = await deleteUserService(id)
 
-    res.status(200).send({ message: 'User deleted' })
-  })
+    resSuccess(res, user.status, user.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
 }
 
-export function signUp(req, res) {
-  const user = new UserModel(req.body)
+export async function signUp(req, res) {
+  const user = req.body
 
-  user.save((err, userDb) => {
-    if (err) return res.status(500).send({ message: `User creation error: ${err}` })
+  try {
+    const userCreated = await signUpService(user)
 
-    const { _id, email, displayName } = userDb
-    return res.status(201).send({
-      id: _id,
-      email,
-      displayName,
-      token: createToken(user)
-    })
-  })
+    resSuccess(res, userCreated.status, userCreated.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
 }
 
-export function signIn(req, res) {
-  UserModel.find({ email: req.body.email }, (err, user) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!user || !user.length) return res.status(404).send({ message: 'User not found' })
+export async function signIn(req, res) {
+  const email = req.body.email
 
-    req.user = user
-    const { _id, email, displayName } = user[0]
+  try {
+    const user = await signInService(email)
 
-    res.status(200).send({
-      message: 'Logged in',
-      id: _id,
-      email,
-      displayName,
-      token: createToken(user)
-    })
-  })
+    resSuccess(res, user.status, user.data)
+  } catch (err) {
+
+    resFailure(res, err.status, err.data)
+  }
 }
