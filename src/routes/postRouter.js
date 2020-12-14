@@ -2,7 +2,7 @@
 
 import express from 'express'
 import {
-  getPostAll,
+  getPosts,
   getPost,
   createPost,
   updatePost,
@@ -13,7 +13,7 @@ import { isAuth } from '../middleware/authMiddleware'
 const api = express.Router()
 
 // routes
-api.get('/', getPostAll)
+api.get('/', getPosts)
 api.get('/:id', getPost)
 api.post('/', isAuth, createPost)
 api.put('/:id',isAuth, updatePost)
