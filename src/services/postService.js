@@ -1,63 +1,70 @@
 'use strict'
 
 import PostModel from '../models/postModel'
+import {
+  getAll,
+  getById,
+  create,
+  update,
+  remove
+} from '../providers/dbProvider'
 
 const response = (data, status = 200) => ({ status, data });
-const error404 = (data) => ({ status: 404, data: data || 'Post not found' });
-const error500 = (err) => ({ status: 500, data: err });
+const error = (status, err) => ({ status, message: err });
 
-export function getPosts() {
-  return new Promise((resolve, reject) => {
-    PostModel.find(null, (err, post) => {
-      if (err) reject(error500(err))
-      if (!post) reject(error404('No posts found'))
+export async function getPosts() {
+  try {
+    const posts = await getAll(PostModel)
 
-      resolve(response(post))
-    })
-  })
+    return response(posts.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function getPost(id) {
-  return new Promise((resolve, reject) => {
-    PostModel.findById(id, (err, post) => {
-      if (err) reject(error500(err))
-      if (!post) reject(error404())
+export async function getPost(id) {
+  try {
+    const post = await getById(PostModel, id)
 
-      resolve(response(post))
-    })
-  })
+    return response(post.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function createPost(post) {
-  const postModel = new PostModel(post)
+export async function createPost(post) {
+  try {
+    const postModel = new PostModel(post)
+    const post = await create(postModel)
 
-  return new Promise((resolve, reject) => {
-    postModel.save((err, postRes) => {
-      if (err) reject(error500(err))
+    return response(post.data)
+  } catch (err) {
 
-      resolve(response(postRes, 201))
-    })
-  })
+    return error(err.status, err.data)
+  }
 }
 
-export function updatePost(id, post) {
-  return new Promise((resolve, reject) => {
-    PostModel.findByIdAndUpdate(id, post, (err, postRes) => {
-      if (err) reject(error500(err))
-      if (!post) reject(error404())
+export async function updatePost(id, post) {
+  try {
+    await update(PostModel, id, post)
+    const newPost = await getById(PostModel, id)
 
-      resolve(response(postRes))
-    });
-  })
+    return response(newPost.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function deletePost(id) {
-  return new Promise((resolve, reject) => {
-    PostModel.findByIdAndDelete(id, null, (err, postRes) => {
-      if (err) reject(error500(err))
-      if (!postRes) reject(error404())
+export async function deletePost(id) {
+  try {
+    const post = await remove(PostModel, id)
 
-      resolve(response(postRes))
-    });
-  })
+    return response(post.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }

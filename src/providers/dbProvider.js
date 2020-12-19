@@ -18,44 +18,54 @@ export function connectDb() {
 
 export function getAll(Model) {
   return new Promise((resolve, reject) => {
-    Model.find(null, (err, post) => {
+    Model.find(null, (err, res) => {
       if (err) reject(error500(err))
-      if (!post) reject(error404())
+      if (!res) reject(error404())
 
-      resolve(response(post))
+      resolve(response(res))
     })
   })
 }
 
 export function getById(Model, id) {
   return new Promise((resolve, reject) => {
-    Model.findById(id, (err, user) => {
+    Model.findById(id, (err, res) => {
       if (err) reject(error500(err))
-      if (!user) reject(error404())
+      if (!res) reject(error404())
 
-      resolve(response(user))
+      resolve(response(res))
     })
   })
 }
 
-export function update(Model, id, user) {
+export function create(Model) {
   return new Promise((resolve, reject) => {
-    Model.findByIdAndUpdate(id, user, (err, userDb) => {
+    Model.save((err, res) => {
       if (err) reject(error500(err))
-      if (!userDb) reject(error404())
 
-      resolve(response(userDb))
+      resolve(response(res, 201))
+    })
+  })
+}
+
+export function update(Model, id, body) {
+  return new Promise((resolve, reject) => {
+    Model.findByIdAndUpdate(id, body, (err, res) => {
+      if (err) reject(error500(err))
+      if (!res) reject(error404())
+
+      resolve(response(res))
     })
   })
 }
 
 export function remove(Model, id) {
   return new Promise((resolve, reject) => {
-    Model.findByIdAndDelete(id, (err, user) => {
+    Model.findByIdAndDelete(id, (err, res) => {
       if (err) reject(error500(err))
-      if (!user) reject(error404())
+      if (!res) reject(error404())
 
-      resolve(response(user))
+      resolve(response(res))
     })
   })
 }

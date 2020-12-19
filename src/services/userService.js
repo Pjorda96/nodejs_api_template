@@ -14,9 +14,6 @@ import {
 const response = (data, status = 200) => ({ status, data });
 const error = (status, err) => ({ status, message: err });
 
-const error404 = () => ({ status: 404, data: 'Db search not found' }); // TODO: delete
-const error500 = (err) => ({ status: 500, data: err }); // TODO: delete
-
 export async function getUsers() {
   try {
     const users = await getAll(UserModel)
