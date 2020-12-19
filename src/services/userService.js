@@ -2,91 +2,100 @@
 
 import UserModel from '../models/userModel';
 import { createToken } from './authService';
+import {
+  getAll,
+  getById,
+  update,
+  remove,
+  signUp as signUpDb,
+  signIn as signInDb
+} from '../providers/dbProvider'
 
 const response = (data, status = 200) => ({ status, data });
-const error404 = (data) => ({ status: 404, data: data || 'User not found' });
-const error500 = (err) => ({ status: 500, data: err });
+const error = (status, err) => ({ status, message: err });
 
-export function getUsers() {
-  return new Promise((resolve, reject) => {
-    UserModel.find({}, (err, users) => {
-      if (err) reject(error500(err))
-      if (!users) reject(error404('No users found'))
+const error404 = () => ({ status: 404, data: 'Db search not found' }); // TODO: delete
+const error500 = (err) => ({ status: 500, data: err }); // TODO: delete
 
-      resolve(response(users))
-    })
-  })
+export async function getUsers() {
+  try {
+    const users = await getAll(UserModel)
+
+    return response(users.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function getUser(id) {
-  return new Promise((resolve, reject) => {
-    UserModel.findById(id, (err, user) => {
-      if (err) reject(error500(err))
-      if (!user) reject(error404())
+export async function getUser(id) {
+  try {
+    const user = await getById(UserModel, id)
 
-      resolve(response(user))
-    })
-  })
+    return response(user.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function updateUser(id, user) {
-  return new Promise((resolve, reject) => {
-    UserModel.findByIdAndUpdate(id, user, (err, user) => {
-      if (err) reject(error500(err))
-      if (!user) reject(error404())
+export async function updateUser(id, userProvided) {
+  try {
+    await update(UserModel, id, userProvided)
+    const newUser = await getById(UserModel, id)
 
-      resolve(response(user))
-    })
-  })
+    return response(newUser.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function deleteUser(id) {
-  return new Promise((resolve, reject) => {
-    UserModel.findByIdAndDelete(id, (err, user) => {
-      if (err) reject(error500(err))
-      if (!user) reject(error404())
+export async function deleteUser(id) {
+  try {
+    const user = await remove(UserModel, id)
 
-      resolve(response(user))
-    })
-  })
+    return response(user.data)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function signUp(user) {
+export async function signUp(user) {
   const userModel = new UserModel(user)
 
-  return new Promise((resolve, reject) => {
-    userModel.save((err, userDb) => {
-      if (err) reject(error500(`User creation error: ${err}`))
+  try {
+    const userDb = await signUpDb(userModel)
+    const { _id, email, displayName } = userDb.data
+    const userResponse = {
+      id: _id,
+      email,
+      displayName,
+      token: createToken(userDb)
+    }
 
-      const { _id, email, displayName } = userDb
-      resolve(response(
-        {
-          id: _id,
-          email,
-          displayName,
-          token: createToken(user)
-        },
-        201
-      ))
-    })
-  })
+    return response(userResponse, userDb.status)
+  } catch (err) {
+
+    return error(err.status, err.data)
+  }
 }
 
-export function signIn(email) {
-  return new Promise((resolve, reject) => {
-    UserModel.find({ email }, (err, user) => {
-      if (err) reject(error500(err))
-      if (!user || !user.length) reject(error404())
+export async function signIn(emailProvided) {
+  try {
+    const user = await signInDb(UserModel, { email: emailProvided })
+    const { _id, email, displayName } = user.data[0]
+    const userResponse = {
+      id: _id,
+      email,
+      displayName,
+      token: createToken(user)
+    }
 
-      const { _id, email, displayName } = user[0]
+    return response(userResponse, user.status)
+  } catch (err) {
 
-      resolve(response({
-        message: 'Logged in',
-        id: _id,
-        email,
-        displayName,
-        token: createToken(user)
-      }))
-    })
-  })
+    return error(err.status, err.data)
+  }
 }
