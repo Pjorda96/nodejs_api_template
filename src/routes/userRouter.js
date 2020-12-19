@@ -7,7 +7,6 @@ import {
   updateUser,
   deleteUser
 } from '../controllers/userController'
-import { authMiddleware } from '../middleware'
 
 const api = express.Router()
 

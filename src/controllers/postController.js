@@ -1,64 +1,52 @@
 'use strict'
 
-import PostModel from '../models/postModel'
+import {
+  getPosts as getPostsService,
+  getPost as getPostService,
+  createPost as createPostService,
+  updatePost as updatePostService,
+  deletePost as deletePostService
+} from '../services/postService';
 
-function getPostAll(req, res) {
-  PostModel.find({}, (err, post) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!post) return res.status(404).send({ message: 'Not post found' })
-
-    res.status(200).send(post)
-  })
+const response = (res, status, data) => {
+  res.status(status || 500).send(data)
 }
 
-function getPost(req, res) {
+export async function getPosts(req, res) {
+  const posts = await getPostsService()
+
+  response(res, posts.status, posts.data || posts.message)
+}
+
+export async function getPost(req, res) {
   const id = req.params.id
 
-  PostModel.findById(id, (err, post) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!post) return res.status(404).send({ message: 'Post not found' })
+  const post = await getPostService(id)
 
-    res.status(200).send(post)
-  })
+  response(res, post.status, post.data || post.message)
 }
 
-function createPost(req, res) {
-  const post = new PostModel(req.body)
+export async function createPost(req, res) {
+  const postBody = req.body
 
-  post.save((err, postRes) => {
-    if (err) res.status(500).send({ message: err })
+  const post = await createPostService(postBody)
 
-    res.status(200).send(postRes)
-  })
+  response(res, post.status, post.data || post.message)
 }
 
-function updatePost(req, res) {
+export async function updatePost(req, res) {
   const id = req.params.id;
-  const body = req.body;
+  const postBody = req.body;
 
-  PostModel.findByIdAndUpdate(id, body, (err, post) => {
-    if (err) res.status(500).send({ message: err });
-    if (!post) return res.status(404).send({ message: 'Post not found' });
+  const post = await updatePostService(id, postBody)
 
-    res.status(200).send(post);
-  });
+  response(res, post.status, post.data || post.message)
 }
 
-function deletePost(req, res) {
+export async function deletePost(req, res) {
   const id = req.params.id;
 
-  PostModel.findByIdAndDelete(id, null, (err, post) => {
-    if (err) res.status(500).send({ message: err });
-    if (!post) return res.status(404).send({ message: 'Post not found' });
+  const post = await deletePostService(id)
 
-    res.status(200).send({ message: 'Post deleted' })
-  })
-}
-
-export {
-  getPostAll,
-  getPost,
-  createPost,
-  updatePost,
-  deletePost
+  response(res, post.status, post.data || post.message)
 }

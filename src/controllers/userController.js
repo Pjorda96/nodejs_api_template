@@ -1,90 +1,61 @@
 'use strict'
 
-import UserModel from '../models/userModel'
-import { authService } from '../services'
+import {
+  getUsers as getUsersService,
+  getUser as getUserService,
+  updateUser as updateUserService,
+  deleteUser as deleteUserService,
+  signUp as signUpService,
+  signIn as signInService
+} from '../services/userService'
 
-function getUsers(req, res) {
-  UserModel.find({}, (err, users) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!users) return res.status(404).send({ message: 'Not users found' })
-
-    res.status(200).send(users)
-  })
+const response = (res, status, data) => {
+  res.status(status || 500).send(data)
 }
 
-function getUser(req, res) {
+export async function getUsers(req, res) {
+  const users = await getUsersService()
+
+  response(res, users.status, users.data || users.message)
+}
+
+export async function getUser(req, res) {
   const id = req.params.id
 
-  UserModel.findById(id, (err, user) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!user) return res.status(404).send({ message: 'User not found' })
+  const users = await getUserService(id)
 
-    res.status(200).send(user)
-  })
+  response(res, users.status, users.data || users.message)
 }
 
-function updateUser(req, res) {
+export async function updateUser(req, res) {
   const id = req.params.id;
   const body = req.body;
 
-  UserModel.findByIdAndUpdate(id, body, (err, user) => {
-    if (err) res.status(500).send({ message: err });
-    if (!user) return res.status(404).send({ message: 'User not found' });
+  const users = await updateUserService(id, body)
 
-    res.status(200).send(user);
-  });
+  response(res, users.status, users.data || users.message)
 }
 
-function deleteUser(req, res) {
+export async function deleteUser(req, res) {
   const id = req.params.id;
 
-  UserModel.findByIdAndDelete(id, null, (err, user) => {
-    if (err) res.status(500).send({ message: err });
-    if (!user) return res.status(404).send({ message: 'User not found' });
+  const users = await deleteUserService(id)
 
-    res.status(200).send({ message: 'User deleted' })
-  })
+  response(res, users.status, users.data || users.message)
 }
 
-function signUp(req, res) {
-  const user = new UserModel(req.body)
+export async function signUp(req, res) {
+  const user = req.body
 
-  user.save((err, userDb) => {
-    if (err) return res.status(500).send({ message: `User creation error: ${err}` })
+  const users = await signUpService(user)
 
-    const { _id, email, displayName } = userDb
-    return res.status(201).send({
-      id: _id,
-      email,
-      displayName,
-      token: authService.createToken(user)
-    })
-  })
+  response(res, users.status, users.data || user.message)
 }
 
-function signIn(req, res) {
-  UserModel.find({ email: req.body.email }, (err, user) => {
-    if (err) return res.status(500).send({ message: err })
-    if (!user || !user.length) return res.status(404).send({ message: 'User not found' })
+export async function signIn(req, res) {
+  const email = req.body.email
 
-    req.user = user
-    const { _id, email, displayName } = user[0]
+  const user = await signInService(email)
 
-    res.status(200).send({
-      message: 'Logged in',
-      id: _id,
-      email,
-      displayName,
-      token: authService.createToken(user)
-    })
-  })
-}
-
-export {
-  getUsers,
-  getUser,
-  updateUser,
-  deleteUser,
-  signIn,
-  signUp
+  response(res, user.status, user.data || user.message)
 }
