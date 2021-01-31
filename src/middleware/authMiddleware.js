@@ -1,15 +1,15 @@
 'use strict'
 
-const services = require('../services')
+import { decodeToken } from '../services/authService'
 
-function isAuth(req, res, next) {
+export function isAuth(req, res, next) {
   if (!req.headers.authorization) {
-    return res.status(403).send({ mensaje: 'You shall not pass' })
+    return res.status(403).send({ message: 'You shall not pass' })
   }
 
   const token = req.headers.authorization.split(" ")[1]
 
-  services.decodeToken(token)
+  decodeToken(token)
     .then(response => {
       req.user = response;
       next()
@@ -18,5 +18,3 @@ function isAuth(req, res, next) {
       res.status(err.status).send({ message: err.message })
     })
 }
-
-module.exports = isAuth

@@ -1,28 +1,27 @@
 'use strict'
 
-const jwt = require('jwt-simple')
-const moment = require('moment')
-const config = require('../config')
+import jwt from 'jwt-simple'
+import config from '../config'
 
-function createToken(user) {
+export function createToken(user) {
   const payload = {
     sub: user._id,
-    iat: moment().unix(),
-    exp: moment().add(14, 'days').unix(),
+    iat: + new Date(), // token creation date
+    exp: + new Date().setHours(new Date().getHours() + config.tokenDuration), // TODO: determine token duration
   }
 
   return jwt.encode(payload, config.secretToken)
 }
 
-function decodeToken(token) {
+export function decodeToken(token) {
   return new Promise(async (resolve, reject) => {
     try {
       const payload = await jwt.decode(token, config.secretToken)
 
-      if (payload.exp <= moment.unix()) {
+      if (payload.exp <= + new Date()) {
         reject({
           status: 401,
-          mensaje: 'Token expirado'
+          message: 'Expired token'
         })
       }
 
@@ -34,9 +33,4 @@ function decodeToken(token) {
       })
     }
   })
-}
-
-module.exports = {
-  createToken,
-  decodeToken
 }
