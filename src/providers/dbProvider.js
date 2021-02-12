@@ -1,5 +1,6 @@
 'use strict'
 
+// TODO: delete this file and rename wanted provider
 import {
   connectDb,
   getAll,
@@ -9,7 +10,8 @@ import {
   remove,
   signUp,
   signIn
-} from './mongoProvider';
+// } from './mongoProvider';
+} from './sqlProvider';
 
 export {
   connectDb,

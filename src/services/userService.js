@@ -1,6 +1,6 @@
 'use strict'
 
-import UserModel from '../models/userModel';
+import UserModel from '../models/userMongoModel';
 import { createToken } from './authService';
 import {
   getAll,

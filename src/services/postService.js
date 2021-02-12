@@ -1,6 +1,6 @@
 'use strict'
 
-import PostModel from '../models/postModel'
+import PostModel from '../models/postMongoModel'
 import {
   getAll,
   getById,
