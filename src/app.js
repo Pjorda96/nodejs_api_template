@@ -13,8 +13,6 @@ const app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
-app.use(connectDb()) // TODO: only for sqlcrud (local)
-
 app.use('/api', api)
 
 app.get('/health/check', (req, res) => {

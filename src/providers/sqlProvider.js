@@ -8,28 +8,42 @@ const response = (data, status = 200) => ({ status, data });
 const error404 = () => ({ status: 404, data: 'Db search not found' });
 const error500 = (err) => ({ status: 500, data: err });
 
-
-export function connectDb() {
-  const dbOptions = {
+export function connectDb(query) {
+  const connection = mysql.createConnection({
     host: config.db.host,
     user: config.db.user,
     password: config.db.password,
     port: config.db.port,
     database: config.db.database
-  };
+  });
 
-  // https://www.npmjs.com/package/express-myconnection
-  return myConnection(mysql, dbOptions, 'request')
+  return new Promise(async (resolve, reject) => {
+    try {
+      connection.connect();
+
+      const result = await new Promise((resolve, reject) => {
+        connection.query(query, (error, results) => {
+          if (error) reject(error);
+
+          resolve(results);
+        });
+      })
+
+      connection.end(() => resolve(result));
+    } catch (err) {
+      reject(err.sqlMessage);
+    }
+  })
 }
 
-export function getAll(Model) {
+export function getAll(table) {
   return new Promise((resolve, reject) => {
-    Model.find(null, (err, res) => {
-      if (err) reject(error500(err))
-      if (!res) reject(error404())
-
-      resolve(response(res))
-    })
+    connectDb(`SELECT * FROM ${table}`)
+      .then(res => {
+        res.length || reject(error404())
+        resolve(response(res))
+      })
+      .catch(err => reject(error500(err)))
   })
 }
 

@@ -1,6 +1,6 @@
 'use strict'
 
-import PostModel from '../models/postMongoModel'
+// import PostModel from '../models/postMongoModel' // TODO: only for mongo
 import {
   getAll,
   getById,
@@ -8,6 +8,8 @@ import {
   update,
   remove
 } from '../providers/dbProvider'
+
+const PostModel = 'post'; // TODO: only for sql
 
 const response = (data, status = 200) => ({ status, data });
 const error = (status, err) => ({ status, message: err });
