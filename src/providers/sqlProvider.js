@@ -1,7 +1,7 @@
 'use strict'
 
 import mysql from 'mysql';
-import myConnection from 'express-myconnection';
+import { v4 as uuidv4 } from 'uuid';
 import config from '../config'
 
 const response = (data, status = 200) => ({ status, data });
@@ -47,46 +47,85 @@ export function getAll(table) {
   })
 }
 
-export function getById(Model, id) {
+export function getById(table, id) {
   return new Promise((resolve, reject) => {
-    Model.findById(id, (err, res) => {
-      if (err) reject(error500(err))
-      if (!res) reject(error404())
-
-      resolve(response(res))
-    })
+    connectDb(`SELECT * FROM ${table} WHERE id = ${id}`)
+      .then(res => {
+        res.length || reject(error404())
+        resolve(response(res))
+      })
+      .catch(err => reject(error500(err)))
   })
 }
 
-export function create(Model) {
+export function getByRef(table, ref) {
   return new Promise((resolve, reject) => {
-    Model.save((err, res) => {
-      if (err) reject(error500(err))
-
-      resolve(response(res, 201))
-    })
+    connectDb(`SELECT * FROM ${table} WHERE extRef = '${ref}'`)
+      .then(res => {
+        res.length || reject(error404())
+        resolve(response(res))
+      })
+      .catch(err => reject(error500(err)))
   })
 }
 
-export function update(Model, id, body) {
+export function create(table, payload) {
+  const { url, category, body } = payload;
+  const extRef = uuidv4();
   return new Promise((resolve, reject) => {
-    Model.findByIdAndUpdate(id, body, (err, res) => {
-      if (err) reject(error500(err))
-      if (!res) reject(error404())
-
-      resolve(response(res))
-    })
+    connectDb(
+      `INSERT INTO ${table} (url, category, body, extRef)
+      VALUES ('${url}', '${category}', '${body}', '${extRef}')`
+    )
+      .then(async () => {
+        try {
+          const getRes = await getByRef(table, extRef)
+          resolve(getRes) // already formatted
+        } catch (resErr) {
+          reject(error500(resErr))
+        }
+      })
+      .catch(err => {
+        reject(error500(err))
+      })
   })
 }
 
-export function remove(Model, id) {
+export function update(table, id, payload) {
+  const { url, category, body } = payload;
   return new Promise((resolve, reject) => {
-    Model.findByIdAndDelete(id, (err, res) => {
-      if (err) reject(error500(err))
-      if (!res) reject(error404())
+    connectDb(
+      `UPDATE ${table}
+      SET url = '${url}', category = '${category}', body = '${body}'
+      WHERE extRef = '${id}'`
+    )
+      .then(async () => {
+        try {
+          const getRes = await getByRef(table, id)
+          resolve(getRes) // already formatted
+        } catch (resErr) {
+          reject(error500(resErr))
+        }
+      })
+      .catch(err => {
+        reject(error500(err))
+      })
+  })
+}
 
-      resolve(response(res))
-    })
+export function remove(table, id) {
+  return new Promise((resolve, reject) => {
+    connectDb(
+      `DELETE FROM ${table} WHERE extRef = '${id}'`
+    )
+      .then(res => {
+        res.affectedRows || reject(error404())
+        console.log(res)
+        resolve(response('OK'))
+      })
+      .catch(err => {
+        reject(error500(err))
+      })
   })
 }
 

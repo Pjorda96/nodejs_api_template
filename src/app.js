@@ -5,7 +5,6 @@ import bodyParser from 'body-parser'
 
 import api from './routes'
 // import { connectDb } from './providers/mongoProvider';
-import { connectDb } from './providers/sqlProvider';
 
 
 const app = express()

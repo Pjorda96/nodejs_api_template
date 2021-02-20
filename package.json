@@ -20,7 +20,8 @@
     "express-myconnection": "^1.0.4",
     "jwt-simple": "^0.5.6",
     "mongoose": "^5.10.16",
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
