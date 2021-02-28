@@ -30,5 +30,5 @@ CRUD of an endpoint called `post`. Basic CRUD with custom auth endpoints.
 Sign In and Sign Up endpoints. Used to handle the `user` creation and get the auth token for restricted endpoints.
 
 ### Postman collection and environment
-* [Postman collection](Node Template.postman_collection.json)
+* [Postman collection](NodeTemplate.postman_collection.json)
 * [Postman environment](Localhost.postman_environment.json)
